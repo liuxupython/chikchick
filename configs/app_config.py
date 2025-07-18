@@ -1,6 +1,9 @@
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+from .database import DatabaseConfig
+from .redis import RedisConfig
+
 
 class DeploymentConfig(BaseSettings):
     """
@@ -37,10 +40,19 @@ class DeploymentConfig(BaseSettings):
     )
 
 
-class AppConfig(DeploymentConfig):
+class AppConfig(
+    DeploymentConfig,
+    DatabaseConfig,
+    RedisConfig,
+):
     """
     Application configs
     """
+
+    SECRET_KEY: str = Field(
+        description="Secret key for application security",
+        default="",
+    )
 
     model_config = SettingsConfigDict(
         # read from dotenv format config file
